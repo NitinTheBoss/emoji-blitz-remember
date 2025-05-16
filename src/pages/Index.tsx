@@ -1,11 +1,13 @@
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { EmojiPicker } from "../components/EmojiPicker";
 import { GameBoard } from "../components/GameBoard";
 import { GameOver } from "../components/GameOver";
 import { Header } from "../components/Header";
 import { Instructions } from "../components/Instructions";
+import { AnswerFeedback } from "../components/AnswerFeedback";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [gameState, setGameState] = useState<"start" | "playing" | "gameOver">("start");
@@ -14,6 +16,8 @@ const Index = () => {
   const [userSequence, setUserSequence] = useState<string[]>([]);
   const [showSequence, setShowSequence] = useState(false);
   const [highScore, setHighScore] = useState(0);
+  const [feedbackState, setFeedbackState] = useState<boolean | null>(null);
+  const { toast } = useToast();
   
   // Get initial high score from localStorage
   useEffect(() => {
@@ -56,6 +60,7 @@ const Index = () => {
     setGameState("playing");
     setLevel(1);
     setUserSequence([]);
+    setFeedbackState(null);
     const newSequence = generateSequence();
     setCurrentSequence(newSequence);
     setShowSequence(true);
@@ -79,37 +84,43 @@ const Index = () => {
     
     const isCorrect = userSequence.every((emoji, index) => emoji === currentSequence[index]);
     
-    if (isCorrect) {
-      // Level up
-      const newLevel = level + 1;
-      setLevel(newLevel);
-      setUserSequence([]);
-      
-      // Update high score if needed
-      if (level > highScore) {
-        setHighScore(level);
-        localStorage.setItem("emojiMemoryHighScore", level.toString());
+    // Show feedback
+    setFeedbackState(isCorrect);
+    
+    setTimeout(() => {
+      if (isCorrect) {
+        // Level up
+        const newLevel = level + 1;
+        setLevel(newLevel);
+        setUserSequence([]);
+        setFeedbackState(null);
+        
+        // Update high score if needed
+        if (level > highScore) {
+          setHighScore(level);
+          localStorage.setItem("emojiMemoryHighScore", level.toString());
+        }
+        
+        // Generate new sequence for next level
+        const newSequence = generateSequence();
+        setCurrentSequence(newSequence);
+        setShowSequence(true);
+        
+        // Hide sequence after 2 seconds
+        setTimeout(() => {
+          setShowSequence(false);
+        }, 2000);
+      } else {
+        // Game over
+        setGameState("gameOver");
+        
+        // Update high score if needed
+        if (level > highScore) {
+          setHighScore(level);
+          localStorage.setItem("emojiMemoryHighScore", level.toString());
+        }
       }
-      
-      // Generate new sequence for next level
-      const newSequence = generateSequence();
-      setCurrentSequence(newSequence);
-      setShowSequence(true);
-      
-      // Hide sequence after 2 seconds
-      setTimeout(() => {
-        setShowSequence(false);
-      }, 2000);
-    } else {
-      // Game over
-      setGameState("gameOver");
-      
-      // Update high score if needed
-      if (level > highScore) {
-        setHighScore(level);
-        localStorage.setItem("emojiMemoryHighScore", level.toString());
-      }
-    }
+    }, 1500); // Show feedback for 1.5 seconds
   };
 
   // Clear user input
@@ -159,6 +170,13 @@ const Index = () => {
             
             {!showSequence && (
               <div className="mt-6">
+                {feedbackState !== null && (
+                  <AnswerFeedback 
+                    isCorrect={feedbackState} 
+                    level={level} 
+                  />
+                )}
+                
                 <div className="flex gap-2 mb-4">
                   <Button 
                     onClick={handleClear}
@@ -181,7 +199,10 @@ const Index = () => {
                     Submit
                   </Button>
                 </div>
-                <EmojiPicker onEmojiSelect={handleEmojiSelect} />
+                <EmojiPicker 
+                  onEmojiSelect={handleEmojiSelect}
+                  currentSequence={currentSequence} 
+                />
               </div>
             )}
           </div>
