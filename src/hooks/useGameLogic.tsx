@@ -36,10 +36,12 @@ export const useGameLogic = () => {
   }, []);
 
   // Generate a random emoji sequence based on level
-  const generateSequence = () => {
-    const baseLength = 3;
-    const additionalEmojis = (state.level - 1) * 2;
-    const sequenceLength = baseLength + additionalEmojis;
+  const generateSequence = (level: number) => {
+    // Calculate the correct number of emojis:
+    // Level 1: 3 emojis
+    // Level 2: 5 emojis
+    // Level 3: 7 emojis, etc.
+    const sequenceLength = 3 + (level - 1) * 2;
     
     const emojiRange = [
       0x1F600, 0x1F607, 0x1F60D, 0x1F618, 0x1F61A, 0x1F61C, 0x1F62D, 0x1F631, 
@@ -74,7 +76,7 @@ export const useGameLogic = () => {
       feedbackState: null
     }));
     
-    const newSequence = generateSequence();
+    const newSequence = generateSequence(1); // Explicitly pass level 1
     setState(prev => ({
       ...prev,
       currentSequence: newSequence,
@@ -82,7 +84,7 @@ export const useGameLogic = () => {
     }));
     
     // Hide sequence after level-based time
-    const displayTime = 2 * 1000; // Base time: 2 seconds for level 1
+    const displayTime = 1 * 2 * 1000; // Level 1: 2 seconds
     
     setTimeout(() => {
       setState(prev => ({ ...prev, showSequence: false }));
@@ -127,16 +129,16 @@ export const useGameLogic = () => {
           localStorage.setItem("emojiMemoryHighScore", state.level.toString());
         }
         
-        // Generate new sequence for next level
-        const newSequence = generateSequence();
+        // Generate new sequence for next level with correct emoji count
+        const newSequence = generateSequence(newLevel);
         setState(prev => ({
           ...prev,
           currentSequence: newSequence,
           showSequence: true
         }));
         
-        // Hide sequence after level-based time (2 seconds × level)
-        const displayTime = newLevel * 2 * 1000;
+        // Hide sequence after level-based time (increasing by 2 seconds per level)
+        const displayTime = newLevel * 2 * 1000; // 2 seconds × level
         
         setTimeout(() => {
           setState(prev => ({ ...prev, showSequence: false }));
@@ -181,8 +183,7 @@ export const useGameLogic = () => {
 
   // Share score on WhatsApp
   const shareOnWhatsApp = () => {
-    const baseEmojisCount = 3;
-    const totalEmojis = baseEmojisCount + (state.level - 1) * 2;
+    const totalEmojis = 3 + (state.level - 1) * 2;
     const message = `I reached Level ${state.level} in Emoji Memory Test and remembered ${totalEmojis} emojis! 🤯 Play it here: ${window.location.href}`;
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/?text=${encodedMessage}`);
