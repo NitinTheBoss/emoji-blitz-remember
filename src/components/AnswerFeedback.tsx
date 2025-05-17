@@ -7,9 +7,14 @@ import { cn } from "@/lib/utils";
 interface AnswerFeedbackProps {
   isCorrect: boolean | null;
   level: number;
+  correctSequence?: string[]; // Add the correct sequence to show when incorrect
 }
 
-export const AnswerFeedback: React.FC<AnswerFeedbackProps> = ({ isCorrect, level }) => {
+export const AnswerFeedback: React.FC<AnswerFeedbackProps> = ({ 
+  isCorrect, 
+  level,
+  correctSequence = []
+}) => {
   if (isCorrect === null) return null;
 
   return (
@@ -36,6 +41,16 @@ export const AnswerFeedback: React.FC<AnswerFeedbackProps> = ({ isCorrect, level
           <AlertDescription>
             You reached Level {level}
           </AlertDescription>
+          {correctSequence.length > 0 && (
+            <div className="mt-2">
+              <p className="text-sm font-medium">Correct sequence was:</p>
+              <div className="flex flex-wrap gap-1 mt-1">
+                {correctSequence.map((emoji, idx) => (
+                  <span key={idx} className="text-xl">{emoji}</span>
+                ))}
+              </div>
+            </div>
+          )}
         </>
       )}
     </Alert>

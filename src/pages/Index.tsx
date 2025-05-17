@@ -57,7 +57,8 @@ const Index = () => {
                 {feedbackState !== null && (
                   <AnswerFeedback 
                     isCorrect={feedbackState} 
-                    level={level} 
+                    level={level}
+                    correctSequence={currentSequence} 
                   />
                 )}
                 

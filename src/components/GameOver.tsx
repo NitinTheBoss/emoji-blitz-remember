@@ -13,9 +13,8 @@ export const GameOver: React.FC<GameOverProps> = ({
   startNewGame, 
   shareOnWhatsApp 
 }) => {
-  // Calculate total emojis remembered based on level
-  const baseEmojisCount = 3;
-  const totalEmojis = baseEmojisCount + (level - 1) * 2;
+  // Updated calculation to match new sequence length logic
+  const totalEmojis = level;
   
   return (
     <div className="p-6 text-center">

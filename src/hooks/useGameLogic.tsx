@@ -37,11 +37,11 @@ export const useGameLogic = () => {
 
   // Generate a random emoji sequence based on level
   const generateSequence = (level: number) => {
-    // Calculate the correct number of emojis:
-    // Level 1: 3 emojis
-    // Level 2: 5 emojis
-    // Level 3: 7 emojis, etc.
-    const sequenceLength = 3 + (level - 1) * 2;
+    // Updated to match new requirements:
+    // Level 1: 1 emoji
+    // Level 2: 2 emojis
+    // Level 3: 3 emojis, etc.
+    const sequenceLength = level;
     
     const emojiRange = [
       0x1F600, 0x1F607, 0x1F60D, 0x1F618, 0x1F61A, 0x1F61C, 0x1F62D, 0x1F631, 
@@ -83,8 +83,8 @@ export const useGameLogic = () => {
       showSequence: true
     }));
     
-    // Hide sequence after level-based time
-    const displayTime = 1 * 2 * 1000; // Level 1: 2 seconds
+    // Updated display time formula - Level 1: 2 seconds
+    const displayTime = 2 * 1000;
     
     setTimeout(() => {
       setState(prev => ({ ...prev, showSequence: false }));
@@ -137,8 +137,8 @@ export const useGameLogic = () => {
           showSequence: true
         }));
         
-        // Hide sequence after level-based time (increasing by 2 seconds per level)
-        const displayTime = newLevel * 2 * 1000; // 2 seconds × level
+        // Updated display time formula - Level n: (n+1) seconds
+        const displayTime = (newLevel + 1) * 1000;
         
         setTimeout(() => {
           setState(prev => ({ ...prev, showSequence: false }));
@@ -183,7 +183,7 @@ export const useGameLogic = () => {
 
   // Share score on WhatsApp
   const shareOnWhatsApp = () => {
-    const totalEmojis = 3 + (state.level - 1) * 2;
+    const totalEmojis = state.level; // Updated to match new sequence length logic
     const message = `I reached Level ${state.level} in Emoji Memory Test and remembered ${totalEmojis} emojis! 🤯 Play it here: ${window.location.href}`;
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/?text=${encodedMessage}`);
