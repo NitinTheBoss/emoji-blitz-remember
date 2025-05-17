@@ -144,14 +144,17 @@ export const useGameLogic = () => {
           setState(prev => ({ ...prev, showSequence: false }));
         }, displayTime);
       } else {
-        // Game over
-        setState(prev => ({ ...prev, gameState: "gameOver" }));
-        
-        // Update high score if needed
-        if (state.level > state.highScore) {
-          setState(prev => ({ ...prev, highScore: prev.level }));
-          localStorage.setItem("emojiMemoryHighScore", state.level.toString());
-        }
+        // Add 2 additional seconds pause to view the correct sequence
+        setTimeout(() => {
+          // Game over
+          setState(prev => ({ ...prev, gameState: "gameOver" }));
+          
+          // Update high score if needed
+          if (state.level > state.highScore) {
+            setState(prev => ({ ...prev, highScore: prev.level }));
+            localStorage.setItem("emojiMemoryHighScore", state.level.toString());
+          }
+        }, 2000); // Additional 2-second pause
       }
     }, 1500); // Show feedback for 1.5 seconds
   };
