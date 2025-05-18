@@ -18,6 +18,7 @@ const Index = () => {
     highScore,
     feedbackState,
     usedEmojis,
+    keyboardEmojis,
     startGame,
     handleEmojiSelect,
     handleSubmit,
@@ -88,6 +89,7 @@ const Index = () => {
                   onEmojiSelect={handleEmojiSelect}
                   currentSequence={currentSequence}
                   usedEmojis={usedEmojis}
+                  keyboardEmojis={keyboardEmojis}
                 />
               </div>
             )}
